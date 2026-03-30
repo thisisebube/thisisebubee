@@ -504,7 +504,7 @@
         </a>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="num" id="github-repo-count">—</div><div class="label">GitHub Repos</div></div>
+        <div class="hero-stat"><div class="num" id="github-repo-count">0</div><div class="label">GitHub Repos</div></div>
         <div class="hero-stat"><div class="num" data-count="3">0</div><div class="label">Years of Python</div></div>
         <div class="hero-stat"><div class="num" data-count="300">0</div><div class="label">Level at UNIZIK</div></div>
       </div>
@@ -778,18 +778,18 @@
     }
 
     /* ── Live GitHub repo count ─────────────────────────────────────────── */
-    (async () => {
-      const el = document.getElementById('github-repo-count');
-      try {
-        const res   = await fetch('https://api.github.com/users/thisisebube');
-        const data  = await res.json();
-        const count = typeof data.public_repos === 'number' ? data.public_repos : null;
-        if (count !== null) animateCount(el, count, 1200);
-        else el.textContent = '—';
-      } catch {
-        el.textContent = '—';
-      }
-    })();
+    fetch('https://api.github.com/users/thisisebube')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        var repoEl = document.getElementById('github-repo-count');
+        if (repoEl && typeof data.public_repos === 'number') {
+          animateCount(repoEl, data.public_repos, 1200);
+        }
+      })
+      .catch(function() {
+        var repoEl = document.getElementById('github-repo-count');
+        if (repoEl) repoEl.textContent = '—';
+      });
 
     const counterIO = new IntersectionObserver(entries => {
       entries.forEach(e => {
