@@ -504,7 +504,7 @@
         </a>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="num" id="github-repo-count">0</div><div class="label">GitHub Repos</div></div>
+        <div class="hero-stat"><div class="num" data-count="2">0</div><div class="label">GitHub Projects</div></div>
         <div class="hero-stat"><div class="num" data-count="3">0</div><div class="label">Years of Python</div></div>
         <div class="hero-stat"><div class="num" data-count="300">0</div><div class="label">Level at UNIZIK</div></div>
       </div>
@@ -557,26 +557,6 @@
       <p class="section-eyebrow" data-reveal>What I've built</p>
       <h2 class="section-title" data-reveal>Featured Projects</h2>
       <div class="projects-grid">
-        <div class="project-card" data-reveal>
-          <div class="project-tags">
-            <span class="tag">Power BI</span>
-            <span class="tag">DAX</span>
-            <span class="tag">Power Query</span>
-            <span class="tag">Data Visualisation</span>
-          </div>
-          <h3>AI &amp; Data Science Job Market Dashboard</h3>
-          <p>
-            Interactive Power BI dashboard analysing 10,345 synthetic job records across 7 countries
-            and 6 roles (2020–2026). Features a filled map of global openings, salary trend lines,
-            experience-vs-salary scatter plots, and a role-demand matrix. Key finding: demand
-            accelerated post-2022, with the USA leading and ML Engineers commanding the highest salaries.
-          </p>
-          <a class="project-link" href="https://github.com/thisisebube/ai-job-market-dashboard" target="_blank" rel="noopener">
-            View on GitHub
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg>
-          </a>
-        </div>
-
         <div class="project-card" data-reveal>
           <div class="project-tags">
             <span class="tag">Python</span>
@@ -648,11 +628,11 @@
             email or find me on these platforms.
           </p>
           <div class="contact-links">
-            <a class="contact-link" href="/cdn-cgi/l/email-protection#493d21203a203a2c2b3c2b2c2a213c223e3c092e24282025672a2624">
+            <a class="contact-link" href="mailto:thisisebubechukwu@gmail.com">
               <span class="icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
               </span>
-              <span class="__cf_email__" data-cfemail="96e2feffe5ffe5f3f4e3f4f3f5fee3fde1e3d6f1fbf7fffab8f5f9fb">[email&#160;protected]</span>
+              thisisebubechukwu@gmail.com
             </a>
             <a class="contact-link" href="https://github.com/thisisebube" target="_blank" rel="noopener">
               <span class="icon">
@@ -703,7 +683,7 @@
 
 
   <!-- ═══════════════════════════════ JS ════════════════════════════════════ -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     'use strict';
 
     /* ── Navbar scroll shadow ───────────────────────────────────────────── */
@@ -777,20 +757,6 @@
       })(start);
     }
 
-    /* ── Live GitHub repo count ─────────────────────────────────────────── */
-    fetch('https://api.github.com/users/thisisebube')
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        var repoEl = document.getElementById('github-repo-count');
-        if (repoEl && typeof data.public_repos === 'number') {
-          animateCount(repoEl, data.public_repos, 1200);
-        }
-      })
-      .catch(function() {
-        var repoEl = document.getElementById('github-repo-count');
-        if (repoEl) repoEl.textContent = '—';
-      });
-
     const counterIO = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
@@ -837,4 +803,13 @@
       // Mailto fallback — no backend required
       const subject = encodeURIComponent('Portfolio contact from ' + name);
       const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg);
-      window.location.href = 'mailto:thi
+      window.location.href = 'mailto:thisisebubechukwu@gmail.com?subject=' + subject + '&body=' + body;
+
+      formMsg.className = 'form-msg success';
+      formMsg.textContent = 'Opening your mail client… Thanks for reaching out!';
+      contactForm.reset();
+    });
+  </script>
+
+</body>
+</html>
