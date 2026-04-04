@@ -117,7 +117,7 @@
       // Mailto fallback — no backend required
       const subject = encodeURIComponent('Portfolio contact from ' + name);
       const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg);
-      window.location.href = 'mailto:thisisebubechukwu@gmail.com?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:ebube@ebubethedev.online?subject=' + subject + '&body=' + body;
 
       formMsg.className = 'form-msg success';
       formMsg.textContent = 'Opening your mail client… Thanks for reaching out!';
