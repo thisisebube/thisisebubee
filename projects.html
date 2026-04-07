@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects · Ebubechukwu Okoroafor</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Projects page specific styles ───────────────────────────────────── */
+    .projects-page-hero {
+      padding: calc(var(--nav-h) + 3.5rem) 0 3rem;
+      background: radial-gradient(ellipse 70% 60% at 10% 20%, var(--green-lt) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+    .projects-page-hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-bottom: .6rem;
+    }
+    .projects-page-hero p {
+      color: var(--gray);
+      font-size: 1rem;
+      max-width: 500px;
+    }
+    .projects-page-hero .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .repo-count-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .3rem .9rem;
+      font-size: .82rem; font-weight: 500; color: var(--gray);
+      box-shadow: var(--shadow-sm);
+    }
+    .repo-count-badge strong { color: var(--green); }
+
+    /* Filter bar */
+    .filter-bar {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 100;
+    }
+    .filter-inner {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-right: .25rem;
+    }
+    .filter-btn {
+      padding: .35rem .9rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem; font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover { border-color: var(--green); color: var(--green); }
+    .filter-btn.active {
+      background: var(--green); border-color: var(--green);
+      color: #fff;
+    }
+    .search-box {
+      margin-left: auto;
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--gray-lt);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: .4rem .9rem;
+      transition: border-color .2s;
+    }
+    .search-box:focus-within { border-color: var(--green); }
+    .search-box svg { color: var(--gray); flex-shrink: 0; }
+    .search-box input {
+      border: none; background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem; color: var(--ink);
+      outline: none; width: 180px;
+    }
+    .search-box input::placeholder { color: var(--gray); }
+
+    /* Grid */
+    .repos-section { padding: 3rem 0 5rem; }
+    .repos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Repo card */
+    .repo-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color .2s, box-shadow .2s, transform .22s;
+      background: var(--white);
+      animation: cardIn .4s var(--ease) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .repo-card:hover {
+      border-color: var(--green);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .repo-card::before {
+      content: ''; display: block;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), #34d399);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+    .repo-card:hover::before { transform: scaleX(1); }
+
+    /* Preview image */
+    .repo-image {
+      width: 100%; aspect-ratio: 2 / 1;
+      object-fit: cover;
+      background: var(--gray-lt);
+      display: block;
+    }
+    .repo-image-placeholder {
+      width: 100%; aspect-ratio: 2 / 1;
+      background: linear-gradient(135deg, var(--green-lt) 0%, #e8f0fe 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .5rem;
+    }
+    .repo-image-placeholder svg { color: var(--green); opacity: .5; }
+    .repo-image-placeholder span {
+      font-size: .75rem; color: var(--gray);
+      font-weight: 500;
+    }
+
+    .repo-body {
+      padding: 1.4rem 1.5rem;
+      display: flex; flex-direction: column;
+      flex: 1;
+    }
+    .repo-meta {
+      display: flex; align-items: center;
+      gap: .6rem; margin-bottom: .8rem; flex-wrap: wrap;
+    }
+    .repo-language {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .75rem; font-weight: 500; color: var(--gray);
+    }
+    .lang-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .repo-stars {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .75rem; color: var(--gray);
+    }
+    .repo-updated {
+      font-size: .72rem; color: var(--gray);
+      margin-left: auto;
+    }
+    .repo-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--ink); margin-bottom: .5rem; line-height: 1.3;
+    }
+    .repo-card p {
+      font-size: .85rem; color: var(--gray);
+      line-height: 1.6; flex: 1; margin-bottom: 1.2rem;
+    }
+    .repo-topics {
+      display: flex; flex-wrap: wrap; gap: .35rem;
+      margin-bottom: 1.2rem;
+    }
+    .repo-topic {
+      background: var(--green-lt); color: var(--green);
+      font-size: .7rem; font-weight: 600;
+      padding: .15rem .6rem; border-radius: 999px;
+    }
+    .repo-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .repo-link {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .83rem; font-weight: 500; color: var(--green);
+      text-decoration: none; transition: gap .2s;
+    }
+    .repo-link:hover { gap: .55rem; }
+    .repo-fork {
+      font-size: .75rem; color: var(--gray);
+      display: flex; align-items: center; gap: .3rem;
+    }
+
+    /* States */
+    .loading-state {
+      grid-column: 1 / -1;
+      text-align: center; padding: 5rem 0;
+      color: var(--gray);
+    }
+    .loading-spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid var(--border);
+      border-top-color: var(--green);
+      animation: spin .7s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center; padding: 4rem 0;
+      color: var(--gray);
+    }
+    .empty-state svg { margin-bottom: 1rem; opacity: .4; }
+
+    .error-state {
+      grid-column: 1 / -1;
+      text-align: center; padding: 4rem 0; color: var(--gray);
+    }
+
+    /* Language colours */
+    .lang-Python         { background: #3572A5; }
+    .lang-JavaScript     { background: #f1e05a; }
+    .lang-HTML           { background: #e34c26; }
+    .lang-CSS            { background: #563d7c; }
+    .lang-Jupyter-Notebook { background: #DA5B0B; }
+    .lang-TypeScript     { background: #2b7489; }
+    .lang-default        { background: var(--gray); }
+
+    @media (max-width: 700px) {
+      .filter-inner { gap: .5rem; }
+      .search-box { margin-left: 0; width: 100%; }
+      .search-box input { width: 100%; }
+      .repos-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a class="nav-logo" href="index.html">Ebube<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="projects.html" class="active">Projects</a></li>
+      <li><a href="index.html#education">Education</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="index.html#about"    class="mob-link">About</a>
+    <a href="index.html#skills"   class="mob-link">Skills</a>
+    <a href="projects.html"       class="mob-link">Projects</a>
+    <a href="index.html#education" class="mob-link">Education</a>
+    <a href="index.html#contact"  class="mob-link">Contact</a>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="projects-page-hero">
+    <div class="wrapper">
+      <p class="section-eyebrow">Portfolio</p>
+      <h1>All Projects</h1>
+      <p>Every public repository — updated live from GitHub whenever I push something new.</p>
+      <div class="hero-meta">
+        <div class="repo-count-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/></svg>
+          <strong id="total-repos">—</strong> public repositories
+        </div>
+        <a class="btn btn-outline" href="https://github.com/thisisebube" target="_blank" rel="noopener" style="font-size:.82rem; padding:.35rem .9rem;">
+          View GitHub Profile
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="wrapper">
+      <div class="filter-inner">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" data-lang="all">All</button>
+        <button class="filter-btn" data-lang="Python">Python</button>
+        <button class="filter-btn" data-lang="Jupyter Notebook">Jupyter</button>
+        <button class="filter-btn" data-lang="JavaScript">JavaScript</button>
+        <button class="filter-btn" data-lang="HTML">HTML</button>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-input" placeholder="Search repos…" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPOS GRID -->
+  <div class="repos-section">
+    <div class="wrapper">
+      <div class="repos-grid" id="repos-grid">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Fetching repositories from GitHub…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Ebubechukwu Okoroafor &nbsp;·&nbsp;
+      <a href="https://github.com/thisisebube" target="_blank" rel="noopener">github.com/thisisebube</a>
+    </p>
+  </footer>
+
+  <button id="back-top" aria-label="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    'use strict';
+
+    const USERNAME   = 'thisisebube';
+    const GRID       = document.getElementById('repos-grid');
+    const SEARCH     = document.getElementById('search-input');
+    const TOTAL_EL   = document.getElementById('total-repos');
+    let   allRepos   = [];
+    let   activelang = 'all';
+
+    /* ── Navbar scroll ───────────────────────────────────────────────────── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    /* ── Hamburger ───────────────────────────────────────────────────────── */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+    document.querySelectorAll('.mob-link').forEach(link =>
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+      })
+    );
+
+    /* ── Back to top ─────────────────────────────────────────────────────── */
+    const backTop = document.getElementById('back-top');
+    window.addEventListener('scroll', () =>
+      backTop.classList.toggle('visible', window.scrollY > 400), { passive: true }
+    );
+    backTop.addEventListener('click', () =>
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    );
+
+    /* ── Language colour map ─────────────────────────────────────────────── */
+    const LANG_COLORS = {
+      'Python':           '#3572A5',
+      'JavaScript':       '#f1e05a',
+      'HTML':             '#e34c26',
+      'CSS':              '#563d7c',
+      'Jupyter Notebook': '#DA5B0B',
+      'TypeScript':       '#2b7489',
+    };
+    function langColor(lang) {
+      return LANG_COLORS[lang] || '#6b6b80';
+    }
+
+    /* ── Time ago ────────────────────────────────────────────────────────── */
+    function timeAgo(dateStr) {
+      const diff = (Date.now() - new Date(dateStr)) / 1000;
+      if (diff < 60)           return 'just now';
+      if (diff < 3600)         return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400)        return Math.floor(diff / 3600) + 'h ago';
+      if (diff < 86400 * 30)   return Math.floor(diff / 86400) + 'd ago';
+      if (diff < 86400 * 365)  return Math.floor(diff / (86400 * 30)) + 'mo ago';
+      return Math.floor(diff / (86400 * 365)) + 'y ago';
+    }
+
+    /* ── Build a card ────────────────────────────────────────────────────── */
+    function buildCard(repo, index) {
+      const card = document.createElement('div');
+      card.className = 'repo-card';
+      card.style.animationDelay = (index * 60) + 'ms';
+      card.dataset.lang = repo.language || '';
+      card.dataset.name = repo.name.toLowerCase();
+      card.dataset.desc = (repo.description || '').toLowerCase();
+
+      // Social preview image from GitHub
+      const imgUrl = `https://opengraph.githubassets.com/1/${USERNAME}/${repo.name}`;
+
+      const topicsHtml = (repo.topics || []).slice(0, 5).map(t =>
+        `<span class="repo-topic">${t}</span>`
+      ).join('');
+
+      const langDot = repo.language
+        ? `<span class="repo-language">
+             <span class="lang-dot" style="background:${langColor(repo.language)}"></span>
+             ${repo.language}
+           </span>`
+        : '';
+
+      card.innerHTML = `
+        <img
+          class="repo-image"
+          src="${imgUrl}"
+          alt="${repo.name} preview"
+          loading="lazy"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="repo-image-placeholder" style="display:none;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+          </svg>
+          <span>No preview available</span>
+        </div>
+        <div class="repo-body">
+          <div class="repo-meta">
+            ${langDot}
+            <span class="repo-stars">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              ${repo.stargazers_count}
+            </span>
+            <span class="repo-updated">${timeAgo(repo.pushed_at)}</span>
+          </div>
+          <h3>${repo.name.replace(/-/g, ' ')}</h3>
+          <p>${repo.description || 'No description provided.'}</p>
+          ${topicsHtml ? `<div class="repo-topics">${topicsHtml}</div>` : ''}
+          <div class="repo-footer">
+            <a class="repo-link" href="${repo.html_url}" target="_blank" rel="noopener">
+              View on GitHub
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </a>
+            ${repo.homepage ? `<a class="repo-link" href="${repo.homepage}" target="_blank" rel="noopener" style="color:var(--gray)">
+              Live site
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </a>` : ''}
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    /* ── Render filtered list ────────────────────────────────────────────── */
+    function render() {
+      const query = SEARCH.value.toLowerCase().trim();
+      const filtered = allRepos.filter(repo => {
+        const matchLang = activelag === 'all' || (repo.language || '') === activelag;
+        const matchSearch = !query ||
+          repo.name.toLowerCase().includes(query) ||
+          (repo.description || '').toLowerCase().includes(query) ||
+          (repo.topics || []).some(t => t.includes(query));
+        return matchLang && matchSearch;
+      });
+
+      GRID.innerHTML = '';
+      if (filtered.length === 0) {
+        GRID.innerHTML = `
+          <div class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <p>No repositories match your search.</p>
+          </div>`;
+        return;
+      }
+      filtered.forEach((repo, i) => GRID.appendChild(buildCard(repo, i)));
+    }
+
+    /* ── Fix typo in render (activelag → activelang) ─────────────────────── */
+    // Redefine render with the correct variable name
+    function render() {
+      const query = SEARCH.value.toLowerCase().trim();
+      const filtered = allRepos.filter(repo => {
+        const matchLang   = activelan === 'all' || (repo.language || '') === activelan;
+        const matchSearch = !query ||
+          repo.name.toLowerCase().includes(query) ||
+          (repo.description || '').toLowerCase().includes(query) ||
+          (repo.topics || []).some(t => t.includes(query));
+        return matchLang && matchSearch;
+      });
+
+      GRID.innerHTML = '';
+      if (filtered.length === 0) {
+        GRID.innerHTML = `
+          <div class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <p>No repositories match your search.</p>
+          </div>`;
+        return;
+      }
+      filtered.forEach((repo, i) => GRID.appendChild(buildCard(repo, i)));
+    }
+
+    /* ── Fetch repos ─────────────────────────────────────────────────────── */
+    async function fetchRepos() {
+      try {
+        // Fetch up to 100 repos, sorted by most recently pushed
+        const res  = await fetch(
+          `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=pushed&direction=desc`
+        );
+        if (!res.ok) throw new Error('GitHub API error');
+        allRepos = await res.json();
+
+        // Update total count badge
+        TOTAL_EL.textContent = allRepos.length;
+
+        // Initial render
+        renderAll();
+
+      } catch (err) {
+        GRID.innerHTML = `
+          <div class="error-state">
+            <p>Could not load repositories. <a href="https://github.com/${USERNAME}" target="_blank">View on GitHub</a> instead.</p>
+          </div>`;
+      }
+    }
+
+    function renderAll() {
+      const query = SEARCH.value.toLowerCase().trim();
+      const filtered = allRepos.filter(repo => {
+        const matchLang   = activelang === 'all' || (repo.language || '') === activelang;
+        const matchSearch = !query ||
+          repo.name.toLowerCase().includes(query) ||
+          (repo.description || '').toLowerCase().includes(query) ||
+          (repo.topics || []).some(t => t.includes(query));
+        return matchLang && matchSearch;
+      });
+
+      GRID.innerHTML = '';
+      if (filtered.length === 0) {
+        GRID.innerHTML = `
+          <div class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <p>No repositories match your search.</p>
+          </div>`;
+        return;
+      }
+      filtered.forEach((repo, i) => GRID.appendChild(buildCard(repo, i)));
+    }
+
+    /* ── Filter buttons ──────────────────────────────────────────────────── */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activelang = btn.dataset.lang;
+        renderAll();
+      });
+    });
+
+    /* ── Search ──────────────────────────────────────────────────────────── */
+    SEARCH.addEventListener('input', renderAll);
+
+    /* ── Init ────────────────────────────────────────────────────────────── */
+    fetchRepos();
+  </script>
+
+</body>
+</html>
