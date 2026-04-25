@@ -211,15 +211,6 @@ body {
   animation: fadeUp .7s .4s var(--ease) both;
 }
 
-#github-repo-count {
-    display: flex; gap: 2.5rem; margin-top: 3.5rem; flex-wrap: wrap;
-    animation: fadeUp .7s .4s var(--ease) both;
-    font-family: 'Fraunces', serif;
-    font-size: 1.9rem; font-weight: 600;
-    color: var(--ink); line-height: 1;
-    margin-top: .2rem;
-}
-
 .hero-stat .num {
   font-family: 'Fraunces', serif;
   font-size: 1.9rem; font-weight: 600;
